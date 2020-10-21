@@ -76,6 +76,7 @@ def test_food_and_water(body):
 
 def test_cage_readings(body):
     session = DB_SESSION()
+    logger.info("Connecting to DB. Hostname:{}, Port: {}".format(hostname, port))
     [
         temperature,
         humidity_percentage,
