@@ -1,0 +1,49 @@
+openapi: 3.0.0
+info:
+  description: This api is for aviary sensor monitoring to maintain aviary's prime condition
+  version: "1.0.0"
+  title: Aviary Monitor
+  contact:
+    email: ahmadmoaaz2@gmail.com
+paths:
+  /stats:
+    get:
+      summary: Gets the event stats
+      operationId: app.get_stats
+      description: Gets Blood Pressure and Heart Rate processsed statistics
+      responses:
+        '200':
+          description: Successfully returned a list of blood pressure events
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Response'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+components:
+  schemas:
+    Response:
+      type: object
+      required:
+        - num_of_readings
+        - num_of_cage_readings
+        - num_of_food_and_water_readings
+      properties:
+        num_of_readings:
+          type: integer
+          example: 500
+        num_of_cage_readings:
+          type: integer
+          example: 300
+        num_of_food_and_water_readings:
+          type: integer
+          example: 500

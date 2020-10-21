@@ -1,0 +1,221 @@
+openapi: 3.0.0
+info:
+  description: This api is for aviary sensor monitoring to maintain aviary's prime condition
+  version: "1.0.0"
+  title: Aviary Monitor
+  contact:
+    email: ahmadmoaaz2@gmail.com
+tags:
+  - name: Food And Water
+    description: Options related to food and water monitoring and management
+  - name: Cage
+    description: Options related to temperature and cleanliness monitoring and management
+  - name: Bird tracking
+    description: Options related to bird monitoring and management
+  - name: Settings
+    description: Configuration settings sensor monitoring
+paths:
+  /foodAndWater:
+    post:
+      tags:
+        - Food And Water Bowls
+      summary: Post food and water sensor levels to get actions to take
+      operationId:
+        app.test_food_and_water
+      description:
+        Takes in a list containing food and water bowl objects that contain sensor levels
+      responses:
+        '200':
+          description: Object with actions to take
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          description: bad input parameter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoodAndWaterRequest'
+        description: Setting request object
+    get:
+      summary: Get food and water events from on or after date
+      operationId: app.get_food_and_water
+      description:
+        Pass in a date get list of events created on or after that date
+      parameters:
+        - name: timestamp
+          in: query
+          required: true
+          description: Limits the number of items on a page
+          schema:
+            type: string
+            format: date-time
+            example: 2016-08-  29T09:12:33.001Z
+      responses:
+        '200':
+          description:
+            Array with events
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /cageReadings:
+    post:
+      tags:
+        - Cage
+        - Bird tracking
+      summary: Read
+      operationId: app.test_cage_readings
+      description:
+        Pass in an object containing cage object to get reccomended actions
+      responses:
+        '200':
+          description: Object with actions to take
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+        '400':
+          description: bad input parameter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CageRequest'
+        description: Setting request object
+    get:
+      summary: Get events from after date specified
+      operationId: app.get_cage_readings
+      description:
+        Pass in a date get list of events created on or after that date
+      parameters:
+          - name: timestamp
+            in: query
+            required: true
+            description: Limits the number of items on a page
+            schema:
+              type: string
+              format: date-time
+              example: 2016-08-  29T09:12:33.001Z
+      responses:
+        '200':
+          description:
+            Array with events
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+#  /settings:
+#    get:
+#      tags:
+#        - Settings
+#      summary: Returns an object containing current settings and default settings
+#      operationId: app.get_settings
+#      description:
+#        Returns an object containing current settings and default settings
+#      responses:
+#        '200':
+#          description: Object with current and default settings
+#          content:
+#            application/json:
+#              schema:
+#                type: object
+#        '500':
+#          description: Internal server error
+#          content:
+#            application/json:
+#              schema:
+#                type: object
+#    post:
+#      tags:
+#        - Settings
+#      summary: Takes in new settings and returns the newly set settings
+#      operationId: app.set_settings
+#      description:
+#        Takes in an object containing new settings (note only changes settings need to be added) and returns the new settings (all parameters)
+#      responses:
+#        '200':
+#          description: Object with current settings
+#          content:
+#            application/json:
+#              schema:
+#                type: object
+#      requestBody:
+#        content:
+#          application/json:
+#            schema:
+#              $ref: '#/components/schemas/SettingRequest'
+#        description: Setting request object
+components:
+  schemas:
+    Response:
+      type: object
+      required:
+        - id
+        - actions
+      properties:
+        id:
+          type: number
+          example: 1
+        actions:
+          type: array
+          example: [{action: 'Fill water bowl 2'}]
+          items:
+            type: object
+    FoodAndWaterRequest:
+      type: array
+      items:
+        type: object
+        required:
+          - name
+          - type
+      example: [
+        {name: "bowl1", type: "water", waterPurity: "98%", waterLevel: "76%", waterTemperature: 19},
+        {name: "bowl2", type: "food", foodWeight: 100}
+      ]
+    CageRequest:
+      type: object
+      example: {
+          temperature: 21,
+          birdlocations:
+            ["top-center-left", bottom-left-frontCorner]
+        }
+    EventResponse:
+      type: array
+      example: [
+        { name: "bowl1", type: "water", waterPurity: "98%", waterLevel: "76%", waterTemperature: 19 },
+        { name: "bowl2", type: "food", foodWeight: 100 }
+      ]
+      items:
+        type: object
+#    SettingRequest:
+#      type: object
+#      example: {
+#        temperatureUnit: "C",
+#        wieghtUnit: "g",
+#        bowlWieghts:
+#          {one: "100"}
+#      }
