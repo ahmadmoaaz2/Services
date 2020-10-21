@@ -40,6 +40,7 @@ def log_event(event_name, unique_id):
 
 def test_food_and_water(body):
     session = DB_SESSION()
+    logger.info("Connecting to DB. Hostname:{}, Port: {}".format(hostname, port))
     list_of_ids = []
     for reading in body:
         name = reading["name"]
@@ -103,6 +104,7 @@ def test_cage_readings(body):
 
 def get_food_and_water(timestamp):
     session = DB_SESSION()
+    logger.info("Connecting to DB. Hostname:{}, Port: {}".format(hostname, port))
     timestamp_datetime = datetime.strptime(timestamp, "%d/%m/%Y-%H:%M:%S")
     readings = session.query(FoodAndWaterReadings).filter(FoodAndWaterReadings.date_created >= timestamp_datetime)
     results_list = []
@@ -115,6 +117,7 @@ def get_food_and_water(timestamp):
 
 def get_cage_readings(timestamp):
     session = DB_SESSION()
+    logger.info("Connecting to DB. Hostname:{}, Port: {}".format(hostname, port))
     timestamp_datetime = datetime.strptime(timestamp, "%d/%m/%Y-%H:%M:%S")
     readings = session.query(CageReadings).filter(CageReadings.date_created >= timestamp_datetime)
     results_list = []
