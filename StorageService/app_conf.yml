@@ -4,4 +4,4 @@ datastore:
   password: password
   hostname: services-based-kafka.westus.cloudapp.azure.com
   port: 3306
-  db: readings
+  db: events
