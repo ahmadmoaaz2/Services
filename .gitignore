@@ -1,5 +1,7 @@
 .idea
 lab*
+ignored
+StorageService/SSH_Key.pem
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
