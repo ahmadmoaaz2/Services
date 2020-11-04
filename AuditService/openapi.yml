@@ -1,0 +1,88 @@
+openapi: 3.0.0
+info:
+  description: This API provides audit info
+  version: "1.0.0"
+  title: Aviary Monitor Audit API
+  contact:
+    email: ahmadmoaaz2@gmail.com
+paths:
+  /foodAndWater:
+    get:
+      summary: Gets a food and water reading from history
+      operationId:
+        app.get_food_and_water
+      description:
+        Gets a food and water reading from eventstore
+      parameters:
+        - name: index
+          in: query
+          description: Gets the food or water event for this index from the eventstore
+          schema:
+            type: integer
+            example: 100
+      responses:
+        '200':
+          description: Successfully returned event
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                   type: string
+  /cageReadings:
+    get:
+      summary: Gets a cage reading from history
+      operationId:
+        app.get_cage_reading
+      description:
+        Gets a cage reading from eventstore
+      parameters:
+        - name: index
+          in: query
+          description: Gets the cage event for this index from the eventstore
+          schema:
+            type: integer
+            example: 100
+      responses:
+        '200':
+          description: Successfully returned event
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string

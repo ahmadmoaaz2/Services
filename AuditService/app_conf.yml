@@ -1,0 +1,9 @@
+version: 1
+events:
+  hostname: services-based-kafka.westus.cloudapp.azure.com
+  port: 9092
+  topic: events
+event1:
+  name: food_and_water
+event2:
+  name: cage_reading

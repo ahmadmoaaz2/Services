@@ -16,31 +16,6 @@ tags:
     description: Configuration settings sensor monitoring
 paths:
   /foodAndWater:
-    post:
-      tags:
-        - Food And Water Bowls
-      summary: Post food and water sensor levels to get actions to take
-      operationId:
-        app.test_food_and_water
-      description:
-        Takes in a list containing food and water bowl objects that contain sensor levels
-      responses:
-        '200':
-          description: Object with actions to take
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-        '400':
-          description: bad input parameter
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FoodAndWaterRequest'
-        description: Setting request object
     get:
       summary: Get food and water events from on or after date
       operationId: app.get_food_and_water
@@ -73,29 +48,6 @@ paths:
                   message:
                     type: string
   /cageReadings:
-    post:
-      tags:
-        - Cage
-        - Bird tracking
-      summary: Read
-      operationId: app.test_cage_readings
-      description:
-        Pass in an object containing cage object to get reccomended actions
-      responses:
-        '200':
-          description: Object with actions to take
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Response"
-        '400':
-          description: bad input parameter
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CageRequest'
-        description: Setting request object
     get:
       summary: Get events from after date specified
       operationId: app.get_cage_readings

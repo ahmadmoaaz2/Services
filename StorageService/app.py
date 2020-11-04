@@ -8,6 +8,10 @@ from sqlalchemy.orm import sessionmaker
 from base import Base
 from food_and_water_readings import FoodAndWaterReadings
 from cage_readings import CageReadings
+import json
+from pykafka import KafkaClient
+from pykafka.common import OffsetType
+from threading import Thread
 
 
 def extract_from_body(d, *keys):
@@ -15,14 +19,14 @@ def extract_from_body(d, *keys):
 
 
 with open('app_conf.yml', 'r') as f:
-    app_config = yaml.safe_load(f.read())['datastore']
+    app_config = yaml.safe_load(f.read())
 [
     user,
     password,
     hostname,
     port,
     db
-] = extract_from_body(app_config, 'user', 'password', 'hostname', 'port', 'db')
+] = extract_from_body(app_config['datastore'], 'user', 'password', 'hostname', 'port', 'db')
 DB_ENGINE = create_engine('mysql+pymysql://{}:{}@{}:{}/{}'.format(user, password, hostname, port, db))
 Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
@@ -71,7 +75,6 @@ def test_food_and_water(body):
         list_of_ids.append(data_entry.id)
     session.close()
     log_event("/foodAndWater", list_of_ids)
-    return list_of_ids, 201
 
 
 def test_cage_readings(body):
@@ -100,7 +103,6 @@ def test_cage_readings(body):
     data_id = data_entry.id
     session.close()
     log_event("/cageReadings", data_id)
-    return [data_id], 201
 
 
 def get_food_and_water(timestamp):
@@ -132,5 +134,34 @@ def get_cage_readings(timestamp):
 app = connexion.FlaskApp(__name__, specification_dir="")
 app.add_api("openapi.yml", strict_validation=True, validate_responses=True)
 
+
+def process_messages():
+    """ Process event messages """
+    hosts = "%s:%d" % (app_config['events']["hostname"],
+                       app_config["events"]["port"])
+    client = KafkaClient(hosts=hosts)
+    topic = client.topics[app_config["events"]["topic"]]
+    consumer = topic.get_simple_consumer(consumer_group='event_group',
+                                         reset_offset_on_start=False,
+                                         auto_offset_reset=OffsetType.LATEST)
+
+    # This is blocking - it will wait for a new message
+    for msg in consumer:
+        msg_str = msg.value.decode('utf-8')
+        msg = json.loads(msg_str)
+        logger.info("Message: %s" % msg)
+        payload = msg["payload"]
+        if msg["type"] == "food_and_water":
+            test_food_and_water(payload)
+        elif msg["type"] == "cage_reading":
+            test_cage_readings(payload)
+
+        # Commit the new message as being read
+        consumer.commit_offsets()
+
+
 if __name__ == '__main__':
+    t1 = Thread(target=process_messages)
+    t1.setDaemon(True)
+    t1.start()
     app.run(port=8090)
