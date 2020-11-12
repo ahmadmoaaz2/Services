@@ -15,5 +15,9 @@ cd StorageService
 docker build -t storage:latest .
 
 cd ..
+cd ui
+docker build -t react:latest .
+
+cd ..
 cd deployment
 docker-compose up -d
