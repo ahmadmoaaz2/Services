@@ -44,7 +44,7 @@ services:
     volumes:
       - my-db:/var/lib/mysql
   reciever:
-    image: receiver
+    image: reciever
     ports:
       - 8080:8080
     depends_on:
@@ -57,7 +57,7 @@ services:
       - kafka
       - db
   processing:
-    image: proccessing
+    image: processing
     ports:
       - 8100:8100
     network_mode: host
