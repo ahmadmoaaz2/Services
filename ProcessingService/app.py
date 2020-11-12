@@ -3,6 +3,7 @@ import logging
 import logging.config
 import os
 from datetime import datetime, date
+from flask_cors import CORS, cross_origin
 
 import connexion
 import yaml

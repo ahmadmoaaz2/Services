@@ -17,14 +17,27 @@ function App() {
     async function updateDashboard(){
         setLoading(true)
         await Promise.all([
-            fetch(service_url + ":8100/stats").then(response => response.json()).then(json => {
+            fetch(service_url + ":8100/stats").then(response => {
+                if (!response.ok && response.status !== 200)
+                    return Promise.reject("Error in request")
+                response.json()
+            }).then(json => {
                 setStats(json)
+            }).catch(e => {
+                console.error(e)
+                setStats({})
             }),
             fetch(service_url + ":8110/foodAndWater?index=1").then(response => response.json()).then(json => {
                 setFoodAndWaterReq(json)
+            }).catch(e => {
+                console.error(e)
+                setFoodAndWaterReq({})
             }),
             fetch(service_url + ":8110/cageReadings?index=1").then(response => response.json()).then(json => {
                 setCageReq(json)
+            }).catch(e => {
+                console.error(e)
+                setCageReq({})
             }),
         ])
         setLastUpdated(new Date().toLocaleString())
