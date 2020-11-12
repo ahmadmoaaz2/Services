@@ -1,12 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import { Button, Navbar, Nav, Form, FormControl, FormLabel } from 'react-bootstrap';
+import {Button, Form, FormControl, FormLabel, Jumbotron, Nav, Navbar, Spinner} from 'react-bootstrap';
 
 const service_url = "http://services-based-kafka.westus.cloudapp.azure.com"
+
+let initialSeconds = 10
+let initialized = false
+let timeOutList = []
 
 
 function App() {
     let [active, setActive] = useState("home")
-    let [interval, setInterval] = useState(2)
+    let [interval, setInterval] = useState(initialSeconds)
     let [intervalUnit, setIntervalUnit] = useState("s")
     let [lastUpdated, setLastUpdated] = useState(new Date().toLocaleString())
     let [loading, setLoading] = useState(true)
@@ -14,26 +18,34 @@ function App() {
     let [foodAndWaterReq, setFoodAndWaterReq] = useState({})
     let [cageReq, setCageReq] = useState({})
 
-    async function updateDashboard(){
+    async function updateDashboard() {
         setLoading(true)
         await Promise.all([
             fetch(service_url + ":8100/stats").then(response => {
-                if (!response.ok && response.status !== 200)
-                    return Promise.reject("Error in request")
-                response.json()
+                if (!response.ok || response.status !== 200)
+                    return Promise.reject("Error in request /stats")
+                return response.json()
             }).then(json => {
                 setStats(json)
             }).catch(e => {
                 console.error(e)
                 setStats({})
             }),
-            fetch(service_url + ":8110/foodAndWater?index=1").then(response => response.json()).then(json => {
+            fetch(service_url + ":8110/foodAndWater?index=1").then(response => {
+                if (!response.ok || response.status !== 200)
+                    return Promise.reject("Error in request /foodAndWater")
+                return response.json()
+            }).then(json => {
                 setFoodAndWaterReq(json)
             }).catch(e => {
                 console.error(e)
                 setFoodAndWaterReq({})
             }),
-            fetch(service_url + ":8110/cageReadings?index=1").then(response => response.json()).then(json => {
+            fetch(service_url + ":8110/cageReadings?index=1").then(response => {
+                if (!response.ok || response.status !== 200)
+                    return Promise.reject("Error in request /cageReadings")
+                return response.json()
+            }).then(json => {
                 setCageReq(json)
             }).catch(e => {
                 console.error(e)
@@ -44,24 +56,31 @@ function App() {
         setLoading(false)
     }
 
+    let totalIntervalInMS = 1000 * interval
+    switch (intervalUnit) {
+        case "m":
+            totalIntervalInMS *= 60
+            break;
+        case "h":
+            totalIntervalInMS *= 60 * 60
+            break;
+        default:
+            break;
+    }
+
     useEffect(() => {
-        let totalInterval = 1000 * interval
-        switch (intervalUnit){
-            case "m":
-                totalInterval *= 60
-                break;
-            case "h":
-                totalInterval *= 60 * 60
-                break;
-            default:
-                break;
-        }
-        setTimeout(updateDashboard, totalInterval)
+        for (let timeout of timeOutList)
+            clearTimeout(timeout)
+        if (!initialized) {
+            timeOutList.push(setTimeout(updateDashboard, initialSeconds * 1000))
+            initialized = true
+        } else
+            timeOutList.push(setTimeout(updateDashboard, totalIntervalInMS))
     }, [interval, intervalUnit, lastUpdated])
 
-    function changeInterval(formData) {
-        console.log(formData.target[0])
-    }
+
+    let nextUpdate = new Date(lastUpdated)
+    nextUpdate.setSeconds(nextUpdate.getSeconds() + totalIntervalInMS / 1000)
     return (
         <>
             <Navbar bg="dark" variant="dark">
@@ -69,19 +88,74 @@ function App() {
                 <Nav className="mr-auto">
                     <Nav.Link href="/" active={active === "home"}>Dashboard</Nav.Link>
                 </Nav>
-                <Form inline onSubmit={changeInterval}>
+                <Form inline>
                     <FormLabel className={"text-white mr-1 lead"}>Refresh Interval: </FormLabel>
-                    <FormControl type="text" placeholder="2" className="mr-sm-2"
-                                 onChange={event => setInterval(parseInt(event.target.value))}/>
-                    <Form.Control as="select" className={"mr-1"}  onChange={event => setIntervalUnit(event.target.value)}>
+                    <FormControl value={interval} type="number" placeholder="2" className="mr-sm-2"
+                                 onChange={event => setInterval(parseInt(event.target.value))} required={true}/>
+                    <Form.Control defaultValue={intervalUnit} as="select" className={"mr-1"}
+                                  onChange={event => setIntervalUnit(event.target.value)}>
                         <option value={"s"}>Seconds</option>
                         <option value={"m"}>Minutes</option>
                         <option value={"h"}>Hours</option>
                     </Form.Control>
-                    <Button variant="outline-info" type={"submit"}>Confirm</Button>
                 </Form>
             </Navbar>
-            <Button onClick={updateDashboard}>Click</Button>
+            <Jumbotron className={'m-0 p-5 pb-6'}>
+                <h1>Current Stats</h1>
+                <div className="highlight">
+                    <pre>
+                        <code className="language-html" data-lang="html">
+                            {JSON.stringify(stats) !== "{}" ? JSON.stringify(stats, undefined, 4) : "No Data"}
+                        </code>
+                    </pre>
+                </div>
+                <br/>
+                <h1>/foodAndWater?index=1</h1>
+                <div className="highlight">
+                    <pre>
+                        <code className="language-html" data-lang="html">
+                            {JSON.stringify(foodAndWaterReq) !== "{}" ? JSON.stringify(foodAndWaterReq, undefined, 4) : "No Data"}
+                        </code>
+                    </pre>
+                </div>
+                <Form inline>
+                    <FormLabel className={"text-black mr-1 lead"}>Index: </FormLabel>
+                    <FormControl id={"cage"} value={interval} type="number" placeholder="2" className="mr-sm-2"
+                                 onChange={event => setInterval(parseInt(event.target.value))} required={true}/>
+                    <Button onClick={() => window.open(service_url+":8110/foodAndWater?index=" + document.getElementById("cage").value)}>Fetch</Button>
+                </Form>
+                <br/>
+                <h1>/cageReadings?index=1</h1>
+                <div className="highlight">
+                    <pre>
+                        <code className="language-html" data-lang="html">
+                            {JSON.stringify(cageReq) !== "{}" ? JSON.stringify(cageReq, undefined, 4) : "No Data"}
+                        </code>
+                    </pre>
+                </div>
+                <Form inline>
+                    <FormLabel className={"text-black mr-1 lead"}>Index: </FormLabel>
+                    <FormControl id={"cage"} value={interval} type="number" placeholder="2" className="mr-sm-2"
+                                 onChange={event => setInterval(parseInt(event.target.value))} required={true}/>
+                    <Button onClick={() => window.open(service_url+":8110/cageReadings?index=" + document.getElementById("cage").value)}>Fetch</Button>
+                </Form>
+                <br/>
+                <br/>
+                <br/>
+            </Jumbotron>
+            <Navbar fixed={"bottom"} bg="dark" variant="dark">
+                <div className={"navbar-left"} style={{marginRight: '5%'}}>
+                    <p className={"text-white lead m-2"}> <span className={"strong"}>Last Updated:</span> {lastUpdated}</p>
+                </div>
+                <div className={"navbar-center"} style={{marginRight: '5%'}}>
+                    <p className={"text-white lead m-2"}> Next Update: {nextUpdate.toLocaleString()}</p>
+                </div>
+                <Form inline className={"navbar-right"} style={{position: "absolute", right: "1%"}}>
+                    <Button variant="outline-info m-1" onClick={updateDashboard} disabled={loading}>{loading ? (<>
+                        <Spinner size={"sm"} animation="border"
+                                 variant="primary"/> Updating... </>) : "Update Now"}</Button>
+                </Form>
+            </Navbar>
         </>
     );
 }
