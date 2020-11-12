@@ -2,6 +2,7 @@
 lab*
 ignored
 SSH_Key.pem
+*.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
