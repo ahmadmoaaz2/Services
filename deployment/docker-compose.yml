@@ -69,6 +69,15 @@ services:
       - 8110:8110
     depends_on:
       - kafka
+  react:
+    image: react
+    ports:
+    - 3000:3000
+    depends_on:
+      - storage
+      - processing
+      - audit_log
+      - reciever
 # Names our volume
 volumes:
   my-db:
