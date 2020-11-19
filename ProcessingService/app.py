@@ -38,9 +38,9 @@ def populate_stats():
         'num_of_readings': 0,
         'num_of_cage_readings': 0,
         'num_of_food_and_water_readings': 0,
-        'last_requested': date.min.strftime("%d/%m/%Y-%H:%M:%S")
+        'last_requested': "01/01/2000-01:01:01"
     }
-    if os.path.isfile(os.getcwd() + "/" + app_config['datastore']['filename']):
+    if os.path.isfile(app_config['datastore']['filename']):
         with open(app_config['datastore']['filename'], 'r') as file:
             stats = json.loads(file.read())
     food_and_water_stats_request = requests.get("{}/foodAndWater?timestamp={}".format(app_config['eventstore']['url'], stats['last_requested']))
