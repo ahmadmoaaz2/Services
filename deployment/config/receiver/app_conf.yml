@@ -1,0 +1,11 @@
+version: 1
+eventstore1:
+  url:
+    http://localhost:8090/foodAndWater
+eventstore2:
+  url:
+    http://localhost:8090/cageReadings
+events:
+  hostname: services-based-kafka.westus.cloudapp.azure.com
+  port: 9092
+  topic: events
