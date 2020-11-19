@@ -41,7 +41,7 @@ def populate_stats():
         'last_requested': date.min.strftime("%d/%m/%Y-%H:%M:%S")
     }
     if os.path.isfile(os.getcwd() + "/" + app_config['datastore']['filename']):
-        with open(os.getcwd() + "/" + app_config['datastore']['filename'], 'r') as file:
+        with open(app_config['datastore']['filename'], 'r') as file:
             stats = json.loads(file.read())
     food_and_water_stats_request = requests.get("{}/foodAndWater?timestamp={}".format(app_config['eventstore']['url'], stats['last_requested']))
     cage_stats_request = requests.get("{}/cageReadings?timestamp={}".format(app_config['eventstore']['url'], stats['last_requested']))
@@ -63,7 +63,7 @@ def populate_stats():
         stats['num_of_cage_readings'] += len(cage_stats_request.json())
         stats['num_of_readings'] += len(cage_stats_request.json())
 
-    with open(os.getcwd() + "/" + app_config['datastore']['filename'], 'w') as file:
+    with open(app_config['datastore']['filename'], 'w') as file:
         file.write(json.dumps(stats))
     logger.debug("Updated data.json stats. New stats: {}".format(json.dumps(stats)))
     logger.info("Periodic processing service has stopped")
@@ -79,8 +79,8 @@ def init_scheduler():
 
 def get_stats():
     logger.info("Get stats request has been called")
-    if os.path.isfile(os.getcwd() + "/" + app_config['datastore']['filename']):
-        with open(os.getcwd() + "/" + app_config['datastore']['filename']) as file:
+    if os.path.isfile(app_config['datastore']['filename']):
+        with open(app_config['datastore']['filename']) as file:
             stats = json.loads(file.read())
             logger.debug("Read stats from file: {}".format(file.read()))
     else:
