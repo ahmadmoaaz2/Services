@@ -42,10 +42,10 @@
             </collectionProp>
           </elementProp>
           <stringProp name="HTTPSampler.domain">services-based-kafka.westus.cloudapp.azure.com</stringProp>
-          <stringProp name="HTTPSampler.port">8080</stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/cageReadings</stringProp>
+          <stringProp name="HTTPSampler.path">/receiver/cageReadings</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -71,10 +71,10 @@
             </collectionProp>
           </elementProp>
           <stringProp name="HTTPSampler.domain">services-based-kafka.westus.cloudapp.azure.com</stringProp>
-          <stringProp name="HTTPSampler.port">8080</stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/foodAndWater</stringProp>
+          <stringProp name="HTTPSampler.path">/receiver/foodAndWater</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
