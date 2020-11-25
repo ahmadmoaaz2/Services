@@ -105,7 +105,9 @@ services:
       - TARGET_ENV=test
     image: react
     ports:
-    - 3000:3000
+      - "3000"
+      networks:
+        - "api.network"
     depends_on:
       - storage
       - processing
