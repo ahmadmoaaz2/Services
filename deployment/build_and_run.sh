@@ -15,8 +15,8 @@ cd ProcessingService
 docker build -t processing:latest .
 
 cd ..
-cd RecieverService
-docker build -t reciever:latest .
+cd ReceiverService
+docker build -t receiver:latest .
 
 cd ..
 cd StorageService
