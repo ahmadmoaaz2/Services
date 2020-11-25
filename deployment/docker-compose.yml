@@ -106,8 +106,8 @@ services:
     image: react
     ports:
       - "3000"
-      networks:
-        - "api.network"
+    networks:
+      - "api.network"
     depends_on:
       - storage
       - processing
