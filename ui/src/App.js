@@ -21,7 +21,7 @@ function App() {
     async function updateDashboard() {
         setLoading(true)
         await Promise.all([
-            fetch(service_url + ":8100/stats").then(response => {
+            fetch(service_url + "/processing/stats").then(response => {
                 if (!response.ok || response.status !== 200)
                     return Promise.reject("Error in request /stats")
                 return response.json()
@@ -31,7 +31,7 @@ function App() {
                 console.error(e)
                 setStats({})
             }),
-            fetch(service_url + ":8110/foodAndWater?index=1").then(response => {
+            fetch(service_url + "/audit_log/foodAndWater?index=1").then(response => {
                 if (!response.ok || response.status !== 200)
                     return Promise.reject("Error in request /foodAndWater")
                 return response.json()
@@ -41,7 +41,7 @@ function App() {
                 console.error(e)
                 setFoodAndWaterReq({})
             }),
-            fetch(service_url + ":8110/cageReadings?index=1").then(response => {
+            fetch(service_url + "/audit_log/cageReadings?index=1").then(response => {
                 if (!response.ok || response.status !== 200)
                     return Promise.reject("Error in request /cageReadings")
                 return response.json()
