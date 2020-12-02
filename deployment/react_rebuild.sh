@@ -14,4 +14,7 @@ cd ..
 cd ui
 docker build -t react:latest .
 
+cd ..
+cd deployment
+
 docker-compose up -d

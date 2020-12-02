@@ -14,6 +14,9 @@ cd ..
 cd AuditService
 docker build -t audit:latest .
 
+cd ..
+cd deployment
+
 docker-compose up -d
 
 

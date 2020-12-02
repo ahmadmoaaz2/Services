@@ -14,4 +14,7 @@ cd ..
 cd ReceiverService
 docker build -t receiver:latest .
 
+cd ..
+cd deployment
+
 docker-compose up -d

@@ -14,4 +14,7 @@ cd ..
 cd StorageService
 docker build -t storage:latest .
 
+cd ..
+cd deployment
+
 docker-compose up -d

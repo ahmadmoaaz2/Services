@@ -14,4 +14,7 @@ cd ..
 cd ProcessingService
 docker build -t processing:latest .
 
+cd ..
+cd deployment
+
 docker-compose up -d
