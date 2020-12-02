@@ -30,12 +30,17 @@ logger = logging.getLogger('basicLogger')
 logger.info("App Conf File: %s" % app_conf_file)
 logger.info("Log Conf File: %s" % log_conf_file)
 
-client = KafkaClient(hosts='{}:{}'.format(app_config['events']['hostname'], app_config['events']['port']))
-topic = client.topics[app_config['events']['topic']]
-producer = topic.get_sync_producer()
+client = None
+topic = None
+producer = None
 
 
 def test_food_and_water(body):
+    global client, topic, producer
+    if client is None or topic is None or producer is None:
+        client = KafkaClient(hosts='{}:{}'.format(app_config['events']['hostname'], app_config['events']['port']))
+        topic = client.topics[app_config['events']['topic']]
+        producer = topic.get_sync_producer()
     logger.info("Received event /foodAndWater request")
     msg = {"type": "food_and_water",
            "datetime": datetime.now().strftime(
@@ -48,6 +53,11 @@ def test_food_and_water(body):
 
 
 def test_cage_readings(body):
+    global client, topic, producer
+    if client is None or topic is None or producer is None:
+        client = KafkaClient(hosts='{}:{}'.format(app_config['events']['hostname'], app_config['events']['port']))
+        topic = client.topics[app_config['events']['topic']]
+        producer = topic.get_sync_producer()
     logger.info("Received event /cageReadings request")
     msg = {"type": "cage_reading",
            "datetime": datetime.now().strftime(
