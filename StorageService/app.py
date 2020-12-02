@@ -49,6 +49,7 @@ logger.info("Log Conf File: %s" % log_conf_file)
 DB_ENGINE = create_engine('mysql+pymysql://{}:{}@{}:{}/{}'.format(user, password, hostname, port, db))
 Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
+session = DB_SESSION()
 
 
 def log_event(event_name, unique_id):

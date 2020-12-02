@@ -30,11 +30,13 @@ logger.info("App Conf File: %s" % app_conf_file)
 logger.info("Log Conf File: %s" % log_conf_file)
 
 
+hostname: str = "%s:%d" % (app_config["events"]["hostname"],
+                           app_config["events"]["port"])
+client = KafkaClient(hosts=hostname)
+topic = client.topics[app_config["events"]["topic"]]
+
+
 def get_food_and_water(index):
-    hostname: str = "%s:%d" % (app_config["events"]["hostname"],
-                          app_config["events"]["port"])
-    client = KafkaClient(hosts=hostname)
-    topic = client.topics[app_config["events"]["topic"]]
     # Here we reset the offset on start so that we retrieve
     # messages at the beginning of the message queue.
     # To prevent the for loop from blocking, we set the timeout to
@@ -59,10 +61,6 @@ def get_food_and_water(index):
 
 
 def get_cage_reading(index):
-    hostname = "%s:%d" % (app_config["events"]["hostname"],
-                          app_config["events"]["port"])
-    client = KafkaClient(hosts=hostname)
-    topic = client.topics[app_config["events"]["topic"]]
     # Here we reset the offset on start so that we retrieve
     # messages at the beginning of the message queue.
     # To prevent the for loop from blocking, we set the timeout to

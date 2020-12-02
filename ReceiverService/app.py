@@ -30,17 +30,13 @@ logger = logging.getLogger('basicLogger')
 logger.info("App Conf File: %s" % app_conf_file)
 logger.info("Log Conf File: %s" % log_conf_file)
 
+client = KafkaClient(hosts='{}:{}'.format(app_config['events']['hostname'], app_config['events']['port']))
+topic = client.topics[app_config['events']['topic']]
+producer = topic.get_sync_producer()
+
 
 def test_food_and_water(body):
     logger.info("Received event /foodAndWater request")
-
-    # r = requests.post(app_config["eventstore1"]["url"], json=body)
-    # logger.info("Returned event %s response with the following unique ids %s and a status code of %s" %
-    #             ("/cageReadings", r.json(), r.status_code))
-
-    client = KafkaClient(hosts='{}:{}'.format(app_config['events']['hostname'], app_config['events']['port']))
-    topic = client.topics[app_config['events']['topic']]
-    producer = topic.get_sync_producer()
     msg = {"type": "food_and_water",
            "datetime": datetime.now().strftime(
                "%d/%m/%Y-%H:%M:%S"),
@@ -53,14 +49,6 @@ def test_food_and_water(body):
 
 def test_cage_readings(body):
     logger.info("Received event /cageReadings request")
-
-    # r = requests.post(app_config["eventstore2"]["url"], json=body)
-    # logger.info("Returned event %s response with the following unique ids %s and a status code of %s" %
-    #             ("/cageReadings", r.json(), r.status_code))
-
-    client = KafkaClient(hosts='{}:{}'.format(app_config['events']['hostname'], app_config['events']['port']))
-    topic = client.topics[app_config['events']['topic']]
-    producer = topic.get_sync_producer()
     msg = {"type": "cage_reading",
            "datetime": datetime.now().strftime(
                "%d/%m/%Y-%H:%M:%S"),
