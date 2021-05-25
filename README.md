@@ -1,7 +1,7 @@
 # Aviary Monitor
 
-This project is designed to monitor the states of multiple different sensors on an aviary and send statistics
-and insight into actions that can be taken to improve the overall health of the aviary.
+This project is a demonstration of a microservice setup with deployment files and build scripts
+
 
 Below are sample event objects that are passed in to get results.
 
